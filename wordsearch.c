@@ -60,12 +60,14 @@ void printPuzzle(char** arr) {
     // in the instructions.
     // Your implementation here...
 
+    // This prints out the char for each columns. 
     for (int i = 0; i < bSize; i++) {
         for (int j = 0; j < bSize; j++) {
             printf("%c ", *(*(arr + i) + j));
         }
         printf("\n");
     }
+    printf("\n");
 }
 
 void searchPuzzle(char** arr, char* word) {
@@ -74,5 +76,29 @@ void searchPuzzle(char** arr, char* word) {
     // as shown in the sample runs. If not found, it will print a 
     // different message as shown in the sample runs.
     // Your implementation here...
+
+    // This is going to allocate memory of the array.
+    int **pathArr = (int**)malloc(bSize * sizeof(int*));
+
+    // This is going to allocate memory for each of the rows. 
+    for (int i = 0; i < bSize; i++) {
+        *(pathArr + i) = (int*)malloc(bSize * sizeof(int));
+    }
+    
+    // This goes through each element and it initialize them to 0.
+    for (int i = 0; i < bSize; i++) {
+        for (int j = 0; j < bSize; j++) {
+            *(*(pathArr + i) + j) = 0;
+        }
+    }
+
+
+    // Using this too look at the pathArr.
+    for (int i = 0; i < bSize; i++) {
+        for (int j = 0; j < bSize; j++) {
+            printf("%d ", *(*(pathArr + i) + j));
+        }
+        printf("\n");
+    }
 
 }
