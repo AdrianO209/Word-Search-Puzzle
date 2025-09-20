@@ -7,6 +7,7 @@
 void printPuzzle(char** arr);
 void searchPuzzle(char** arr, char* word);
 int bSize;
+char toUpper(char c);
 
 // Main function, DO NOT MODIFY 	
 int main(int argc, char **argv) {
@@ -70,6 +71,15 @@ void printPuzzle(char** arr) {
     printf("\n");
 }
 
+// This converts the character from a lowercase to uppercase with ASCII values.
+char toUpper(char c) {
+    if (c >= 'a' && c <= 'z') {
+        return c - 32;
+    }
+    return c;
+}
+
+
 void searchPuzzle(char** arr, char* word) {
     // This function checks if arr contains the search word. If the 
     // word appears in arr, it will print out a message and the path 
@@ -92,8 +102,10 @@ void searchPuzzle(char** arr, char* word) {
         }
     }
 
+    findPath(pathArr, word);
 
-    // Using this too look at the pathArr.
+
+    // This prints out the partArr into the terminal.
     for (int i = 0; i < bSize; i++) {
         for (int j = 0; j < bSize; j++) {
             printf("%d ", *(*(pathArr + i) + j));
