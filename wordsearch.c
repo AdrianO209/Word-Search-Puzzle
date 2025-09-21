@@ -76,7 +76,6 @@ void searchPuzzle(char** arr, char* word) {
     // This initalize the pathArr.
     initalize();
     checkWord(arr, word);
-    printPathArr();
 }
 
 // This converts the character from a lowercase to uppercase with ASCII values.
@@ -119,14 +118,16 @@ void checkWord(char** arr, char* word) {
     for (int i = 0; i < bSize; i++) {
         for (int j = 0; j < bSize; j++) {
             if (*((*(arr + i) + j)) == toUpper(*(word + wCounter))) {
-                *(*(pathArr + i) + j) = 1;
+                *(*(pathArr + i) + j) = wCounter + 1;
+                wCounter++;
             }
         }
     }
-    wCounter++;
 
-    if (wCounter < bSize) {
+    if (wCounter == 0) {
+        printf("Word no found!");
+    } else if (wCounter < bSize) {
         checkWord(arr, word);
+        printPathArr();
     }
-    
 }
