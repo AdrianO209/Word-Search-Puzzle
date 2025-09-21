@@ -7,9 +7,13 @@
 void printPuzzle(char** arr);
 void searchPuzzle(char** arr, char* word);
 int bSize;
+
 int **pathArr;
 char toUpper(char c);
 void initalize();
+void printPathArr();
+void checkWord(char** arr, char* word);
+int wCounter = 0;
 
 // Main function, DO NOT MODIFY 	
 int main(int argc, char **argv) {
@@ -71,14 +75,8 @@ void printPuzzle(char** arr) {
 void searchPuzzle(char** arr, char* word) {
     // This initalize the pathArr.
     initalize();
-
-    // Using this too look at the pathArr.
-    for (int i = 0; i < bSize; i++) {
-        for (int j = 0; j < bSize; j++) {
-            printf("%d ", *(*(pathArr + i) + j));
-        }
-        printf("\n");
-    }
+    checkWord(arr, word);
+    printPathArr();
 }
 
 // This converts the character from a lowercase to uppercase with ASCII values.
@@ -104,4 +102,31 @@ void initalize() {
             *(*(pathArr + i) + j) = 0;
         }
     }
+}
+
+void printPathArr() {
+    // Using this too print the pathArr.
+    for (int i = 0; i < bSize; i++) {
+        for (int j = 0; j < bSize; j++) {
+            printf("%d ", *(*(pathArr + i) + j));
+        }
+        printf("\n");
+    }
+}
+
+void checkWord(char** arr, char* word) {
+    // This checks if the char is in the puzzle for each char in the string.
+    for (int i = 0; i < bSize; i++) {
+        for (int j = 0; j < bSize; j++) {
+            if (*((*(arr + i) + j)) == toUpper(*(word + wCounter))) {
+                *(*(pathArr + i) + j) = 1;
+            }
+        }
+    }
+    wCounter++;
+
+    if (wCounter < bSize) {
+        checkWord(arr, word);
+    }
+    
 }
