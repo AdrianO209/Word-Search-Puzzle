@@ -7,7 +7,9 @@
 void printPuzzle(char** arr);
 void searchPuzzle(char** arr, char* word);
 int bSize;
+int **pathArr;
 char toUpper(char c);
+void initalize();
 
 // Main function, DO NOT MODIFY 	
 int main(int argc, char **argv) {
@@ -66,6 +68,19 @@ void printPuzzle(char** arr) {
     printf("\n");
 }
 
+void searchPuzzle(char** arr, char* word) {
+    // This initalize the pathArr.
+    initalize();
+
+    // Using this too look at the pathArr.
+    for (int i = 0; i < bSize; i++) {
+        for (int j = 0; j < bSize; j++) {
+            printf("%d ", *(*(pathArr + i) + j));
+        }
+        printf("\n");
+    }
+}
+
 // This converts the character from a lowercase to uppercase with ASCII values.
 char toUpper(char c) {
     if (c >= 'a' && c <= 'z') {
@@ -74,9 +89,9 @@ char toUpper(char c) {
     return c;
 }
 
-void searchPuzzle(char** arr, char* word) {
+void initalize() {
     // This is going to allocate memory of the array.
-    int **pathArr = (int**)malloc(bSize * sizeof(int*));
+    pathArr = (int**)malloc(bSize * sizeof(int*));
 
     // This is going to allocate memory for each of the rows. 
     for (int i = 0; i < bSize; i++) {
@@ -89,14 +104,4 @@ void searchPuzzle(char** arr, char* word) {
             *(*(pathArr + i) + j) = 0;
         }
     }
-
-
-    // Using this too look at the pathArr.
-    for (int i = 0; i < bSize; i++) {
-        for (int j = 0; j < bSize; j++) {
-            printf("%d ", *(*(pathArr + i) + j));
-        }
-        printf("\n");
-    }
-
 }
