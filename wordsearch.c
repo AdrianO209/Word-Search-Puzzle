@@ -12,8 +12,10 @@ int **pathArr;
 char toUpper(char c);
 void initalize();
 void printPathArr();
-void checkWord(char** arr, char* word);
-int wCounter = 0;
+void checkWord(char** arr, char* word, int row, int col);
+void checkPath(char** arr, char* word, int row, int col, int index);
+int row = 0;
+int col = 0;
 
 // Main function, DO NOT MODIFY 	
 int main(int argc, char **argv) {
@@ -75,7 +77,7 @@ void printPuzzle(char** arr) {
 void searchPuzzle(char** arr, char* word) {
     // This initalize the pathArr.
     initalize();
-    checkWord(arr, word);
+    checkWord(arr, word, 0, 0);
 }
 
 // This converts the character from a lowercase to uppercase with ASCII values.
@@ -113,21 +115,23 @@ void printPathArr() {
     }
 }
 
-void checkWord(char** arr, char* word) {
+void checkWord(char** arr, char* word , int row, int col) {
     // This checks if the char is in the puzzle for each char in the string.
     for (int i = 0; i < bSize; i++) {
         for (int j = 0; j < bSize; j++) {
-            if (*((*(arr + i) + j)) == toUpper(*(word + wCounter))) {
-                *(*(pathArr + i) + j) = wCounter + 1;
-                wCounter++;
+
+            if (*(*(arr + i) + j) == toUpper(*(word + 0))) {
+                checkPath(arr, word, i, j, 1);
             }
         }
     }
+}
 
-    if (wCounter == 0) {
-        printf("Word no found!");
-    } else if (wCounter < bSize) {
-        checkWord(arr, word);
+void checkPath(char** arr, char* word , int row, int col, int index) {
+    if (index == strlen(word)) {
         printPathArr();
+    } else {
+
     }
+    
 }
