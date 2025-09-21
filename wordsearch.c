@@ -13,7 +13,7 @@ char toUpper(char c);
 void initalize();
 void printPathArr();
 void checkWord(char** arr, char* word, int row, int col);
-void checkPath(char** arr, char* word, int row, int col, int index);
+int checkPath(char** arr, char* word, int row, int col, int index);
 int row = 0;
 int col = 0;
 
@@ -127,11 +127,73 @@ void checkWord(char** arr, char* word , int row, int col) {
     }
 }
 
-void checkPath(char** arr, char* word , int row, int col, int index) {
+int checkPath(char** arr, char* word , int row, int col, int index) {
     if (index == strlen(word)) {
         printPathArr();
-    } else {
+        return 1;
+    } 
+        
+    // Backtrack
+    *(*(pathArr + row) + col) = index;
 
+    // Check if we can play top-left
+    if (row > 0 && col > 0) {
+        if (*(*(arr + (row - 1)) + (col - 1)) == toUpper(*(word + index))) {
+            if (checkPath(arr, word, row - 1, col - 1, index + 1)) {
+                return 1;
+            }
+        }
+    }
+
+    // Check if we can play top-middle
+    if (row > 0) {
+        if (*(*(arr + (row - 1)) + col) == toUpper(*(word + index))) {
+            if (checkPath(arr, word, row - 1, col, index + 1)) {
+                return 1;
+            }
+        }
+    }
+
+    // Check if we can play top-right
+    if (row > 0 && col < bSize - 1) {
+        if (checkPath(arr, word, row - 1, col + 1, index + 1)) {
+            return 1;
+        }
+    }
+
+    // Check if we can play middle-left
+    if (col > 0) {
+        if (checkPath(arr, word, row , col - 1, index + 1)) {
+            return 1;
+        }
+    }
+
+    // Check if we can play middle-right
+    if (col < bSize - 1) {
+        if (checkPath(arr, word, row, col + 1, index + 1)) {
+            return 1;
+        }
+    }
+
+    // Check if we can play bottom-left
+    if (col > 0 && row < bSize - 1) {
+        if (checkPath(arr, word, row + 1, col - 1, index + 1)){
+            return 1;
+        }
+    }
+
+    // Check if we can play bottom-middle
+    if (row < bSize - 1) {
+        if (checkPath(arr, word, row + 1, col, index + 1)) {
+            return 1;
+        }
+    }
+    
+    // Check if we can play bottom-right
+    if (col < bSize - 1 && row < bSize - 1) {
+        if (checkPath(arr, word, row + 1, col + 1, index + 1)) {
+            return 1;
+        }
     }
     
 }
