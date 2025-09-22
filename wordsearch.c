@@ -8,16 +8,14 @@ void printPuzzle(char** arr);
 void searchPuzzle(char** arr, char* word);
 int bSize;
 
-int **pathArr;
-int ** visitedArr;
+char ***pathArr;
 char toUpper(char c);
 void initalize();
 void printPathArr();
-void checkWord(char** arr, char* word, int row, int col);
+void checkWord(char** arr, char* word);
 int checkPath(char** arr, char* word, int row, int col, int index);
 int row = 0;
 int col = 0;
-int found = 0;
 
 // Main function, DO NOT MODIFY 	
 int main(int argc, char **argv) {
@@ -79,7 +77,7 @@ void printPuzzle(char** arr) {
 void searchPuzzle(char** arr, char* word) {
     // This initalize the pathArr.
     initalize();
-    checkWord(arr, word, 0, 0);
+    checkWord(arr, word);
 }
 
 // This converts the character from a lowercase to uppercase with ASCII values.
@@ -92,35 +90,39 @@ char toUpper(char c) {
 
 void initalize() {
     // This is going to allocate memory of the array.
-    pathArr = (int**)malloc(bSize * sizeof(int*));
-    visitedArr = (int**)malloc(bSize * sizeof(int*));
+    pathArr = (char***)malloc(bSize * sizeof(char**));
 
-    // This is going to allocate memory for each of the rows. 
     for (int i = 0; i < bSize; i++) {
-        *(pathArr + i) = (int*)malloc(bSize * sizeof(int));
-        *(visitedArr + i) = (int*)malloc(bSize * sizeof(int));
-    }
-    
-    // This goes through each element and it initialize them to 0.
-    for (int i = 0; i < bSize; i++) {
+        // For each row, allocate columns
+        *(pathArr + i) = (char**)malloc(bSize * sizeof(char*));
         for (int j = 0; j < bSize; j++) {
-            *(*(pathArr + i) + j) = 0;
-            *(*(visitedArr + i) + j) = 0;
+            // For each cell, allocate space for the string itself
+            *(*(pathArr + i) + j) = (char*)malloc(20 * sizeof(char));
+            // Initialize the string to "0"
+            strcpy(*(*(pathArr + i) + j), "");
         }
     }
+
 }
 
 void printPathArr() {
     // Using this too print the pathArr.
     for (int i = 0; i < bSize; i++) {
         for (int j = 0; j < bSize; j++) {
-            printf("%d ", *(*(pathArr + i) + j));
+            char* cell = *(*(pathArr + i) + j);
+            // This prints "0" if the cell is empty.
+            if (strlen(cell) == 0) {
+                printf("0\t");
+            } else {
+                // This prints the path.
+                printf("%s\t", cell);
+            }
         }
-        printf("\n");
+         printf("\n");
     }
 }
 
-void checkWord(char** arr, char* word , int row, int col) {
+void checkWord(char** arr, char* word) {
     // This checks if the char is in the puzzle for each char in the string.
     for (int i = 0; i < bSize; i++) {
         for (int j = 0; j < bSize; j++) {
@@ -137,86 +139,69 @@ void checkWord(char** arr, char* word , int row, int col) {
 }
 
 int checkPath(char** arr, char* word , int row, int col, int index) {
+    // if the word char doesn't make with the puzzle then its not a path.
+    if (toUpper(*(*(arr + row) + col)) != toUpper(*(word + index))) {
+        return 0;
+    }
+
+    // This gets the current path
+    char* currentPath = *(*(pathArr + row) + col);
+
+    // gets the length of the path before adding another path. This is for backtracking.
+    int oldLen = strlen(currentPath);
+    
+    // This is the number of the next path. (its temporary)
+    char newStep[10];
+
+    sprintf(newStep, "%d", index + 1);
+
+    // This adds the coma between the numbers if needed.
+    if (oldLen == 0) {
+        sprintf(currentPath, "%d", index + 1);
+    } else {
+        sprintf(currentPath + oldLen, ",%d", index + 1);
+    }
+    
+    // if the word is complete than stop the recursive.
     if (index == strlen(word) - 1) {
         return 1;
     } 
-    *(*(pathArr + row) + col) = index + 1;
-    *(*(visitedArr + row) + col) = 1;
 
-    // Check if we can play top-left
+    // Check top-left
     if (row > 0 && col > 0) {
-        if (toUpper(*(*(arr + (row - 1)) + (col - 1))) == toUpper(*(word + index + 1)) && *(*(visitedArr + (row - 1)) + (col - 1)) == 0) {
-            if (checkPath(arr, word, row - 1, col - 1, index + 1)) {
-                return 1;
-            }
-        }
+        if (checkPath(arr, word, row - 1, col - 1, index + 1)) return 1;
     }
-
-    // Check if we can play top-middle
+    // Check top-middle
     if (row > 0) {
-        if (toUpper(*(*(arr + (row - 1)) + col)) == toUpper(*(word + index + 1)) && *(*(visitedArr + (row - 1)) + col) == 0) {
-            if (checkPath(arr, word, row - 1, col, index + 1)) {
-                return 1;
-            }
-        }
+        if (checkPath(arr, word, row - 1, col, index + 1)) return 1;
     }
-
-    // Check if we can play top-right
+    // Check top-right
     if (row > 0 && col < bSize - 1) {
-        if (toUpper(*(*(arr + (row - 1)) + (col + 1))) == toUpper(*(word + index + 1)) && *(*(visitedArr + (row - 1)) + (col + 1)) == 0) {
-            if (checkPath(arr, word, row - 1, col + 1, index + 1)) {
-                return 1;
-            }
-        }
-
+        if (checkPath(arr, word, row - 1, col + 1, index + 1)) return 1;
     }
-
-    // Check if we can play middle-left
+    // Check middle-left
     if (col > 0) {
-        if (toUpper(*(*(arr + row) + (col - 1))) == toUpper(*(word + index + 1)) && *(*(visitedArr + row) + (col - 1)) == 0) {
-            if (checkPath(arr, word, row , col - 1, index + 1)) {
-                return 1;
-            }
-        }
+        if (checkPath(arr, word, row, col - 1, index + 1)) return 1;
     }
-
-    // Check if we can play middle-right
+    // Check middle-right
     if (col < bSize - 1) {
-        if (toUpper(*(*(arr + row) + (col + 1))) == toUpper(*(word + index + 1)) && *(*(visitedArr + row) + (col + 1)) == 0) {
-            if (checkPath(arr, word, row, col + 1, index + 1)) {
-                return 1;
-            }
-        }
+        if (checkPath(arr, word, row, col + 1, index + 1)) return 1;
     }
-
-    // Check if we can play bottom-left
+    // Check bottom-left
     if (col > 0 && row < bSize - 1) {
-        if (toUpper(*(*(arr + (row + 1)) + (col - 1))) == toUpper(*(word + index + 1)) && *(*(visitedArr + (row + 1)) + (col - 1)) == 0) {
-            if (checkPath(arr, word, row + 1, col - 1, index + 1)){
-                return 1;
-            }
-        }
+        if (checkPath(arr, word, row + 1, col - 1, index + 1)) return 1;
     }
-
-    // Check if we can play bottom-middle
+    // Check bottom-middle
     if (row < bSize - 1) {
-        if (toUpper(*(*(arr + (row + 1)) + col)) == toUpper(*(word + index + 1)) && *(*(visitedArr + (row + 1)) + col) == 0) {
-            if (checkPath(arr, word, row + 1, col, index + 1)) {
-                return 1;
-            }
-        }
+        if (checkPath(arr, word, row + 1, col, index + 1)) return 1;
+    }
+    // Check bottom-right
+    if (col < bSize - 1 && row < bSize - 1) {
+        if (checkPath(arr, word, row + 1, col + 1, index + 1)) return 1;
     }
     
-    // Check if we can play bottom-right
-    if (col < bSize - 1 && row < bSize - 1) {
-        if (toUpper(*(*(arr + (row + 1)) + (col + 1))) == toUpper(*(word + index + 1)) && *(*(visitedArr + (row + 1)) + (col + 1)) == 0) {
-            if (checkPath(arr, word, row + 1, col + 1, index + 1)) {
-                return 1;
-            }
-        }
-    }
+    // Backtracke, go back to the pervious path.
+    currentPath[oldLen] = '\0';
 
-    *(*(pathArr + row) + col) = 0;
-    *(*(visitedArr + row) + col) = 0;
     return 0;
 }
